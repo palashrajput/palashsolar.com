@@ -163,9 +163,9 @@ body {
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 .calc-header h1 {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(22px, 4vw, 36px);
+  font-size: clamp(26px, 4.5vw, 42px);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
   letter-spacing: -0.02em;
   margin-bottom: 12px;
 }
@@ -237,7 +237,7 @@ body {
 }
 @media (max-width: 640px) {
   .form-inner { padding: 24px 20px; }
-  .calc-header h1 { font-size: 22px; }
+  .calc-header h1 { font-size: 26px; }
   .calc-header { margin-bottom: 24px; }
 }
 
@@ -766,7 +766,7 @@ body {
   line-height: 1.5;
 }
 .chart-canvas-wrap {
-  height: 160px;
+  height: 200px;
   position: relative;
 }
 
@@ -905,9 +905,61 @@ body {
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
-@media (max-width: 760px) {
-  .financing-grid { grid-template-columns: 1fr; }
+/* On narrower screens, switch to horizontal scroll */
+@media (max-width: 800px) {
+  .financing-grid {
+    display: none;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    display: none; /* overridden by JS to flex */
+  }
+  .financing-grid.unlocked-grid {
+    display: flex !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 12px;
+    padding-bottom: 12px;
+    scrollbar-width: none;
+  }
+  .financing-grid.unlocked-grid::-webkit-scrollbar { display: none; }
+  .finance-card {
+    flex: 0 0 82vw;
+    max-width: 320px;
+    scroll-snap-align: start;
+  }
 }
+.financing-scroll-hint {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  animation: nudge 2s ease-in-out 1s 2;
+}
+@media (max-width: 800px) {
+  .financing-scroll-hint { display: flex; }
+}
+@keyframes nudge {
+  0%,100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
+}
+.scroll-hint-arrow {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.scroll-hint-dot {
+  width: 5px; height: 5px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  animation: dot-fade 1.4s ease-in-out infinite;
+}
+.scroll-hint-dot:nth-child(2) { animation-delay: 0.2s; }
+.scroll-hint-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot-fade { 0%,100%{opacity:0.3} 50%{opacity:1} }
 
 .finance-card {
   background: var(--card-bg);
@@ -1349,7 +1401,16 @@ body {
         <div class="blur-content" id="blurTarget" style="margin-top:16px;">
           <div class="financing-section-title">📑 Detailed Financing Options</div>
           <p class="financing-section-sub">Three ways to go solar — all numbers are based on your property.</p>
-          <div class="financing-grid">
+          <div class="financing-scroll-hint">
+            Swipe to see all options
+            <span class="scroll-hint-arrow">
+              <span class="scroll-hint-dot"></span>
+              <span class="scroll-hint-dot"></span>
+              <span class="scroll-hint-dot"></span>
+            </span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="financing-grid" id="financingGrid">
             <!-- Cash -->
             <div class="finance-card cash-card">
               <span class="finance-badge green">Best Value</span>
@@ -1762,20 +1823,106 @@ function renderCharts(bill, gridFee, costNoSolar) {
     data: {
       labels,
       datasets: [
-        { label: 'Without Solar', data: noSolarCum, borderColor: '#FF5A5A', backgroundColor: 'rgba(255,90,90,0.08)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#FF5A5A', borderWidth: 2 },
-        { label: 'With Solar',    data: solarCum,   borderColor: '#06D6A0', backgroundColor: 'rgba(6,214,160,0.08)',  fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#06D6A0', borderWidth: 2 }
+        {
+          label: 'Without Solar',
+          data: noSolarCum,
+          borderColor: '#FF5A5A',
+          backgroundColor: (ctx) => {
+            const chart = ctx.chart;
+            const {ctx: c, chartArea} = chart;
+            if (!chartArea) return 'transparent';
+            const grad = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+            grad.addColorStop(0, 'rgba(255,90,90,0.25)');
+            grad.addColorStop(1, 'rgba(255,90,90,0.01)');
+            return grad;
+          },
+          fill: true,
+          tension: 0.45,
+          pointRadius: 5,
+          pointHoverRadius: 8,
+          pointBackgroundColor: '#FF5A5A',
+          pointBorderColor: '#0A1628',
+          pointBorderWidth: 2,
+          borderWidth: 2.5
+        },
+        {
+          label: 'With Solar',
+          data: solarCum,
+          borderColor: '#06D6A0',
+          backgroundColor: (ctx) => {
+            const chart = ctx.chart;
+            const {ctx: c, chartArea} = chart;
+            if (!chartArea) return 'transparent';
+            const grad = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+            grad.addColorStop(0, 'rgba(6,214,160,0.18)');
+            grad.addColorStop(1, 'rgba(6,214,160,0.01)');
+            return grad;
+          },
+          fill: true,
+          tension: 0.45,
+          pointRadius: 5,
+          pointHoverRadius: 8,
+          pointBackgroundColor: '#06D6A0',
+          pointBorderColor: '#0A1628',
+          pointBorderWidth: 2,
+          borderWidth: 2.5
+        }
       ]
     },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive: true,
+      maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { position: 'top', labels: { usePointStyle: true, padding: 14, color: 'rgba(255,255,255,0.6)', font: chartDefaults.font } },
-        tooltip: { callbacks: { label: (ctx) => ' ' + ctx.dataset.label + ': $' + fmt(ctx.parsed.y) } }
+        legend: {
+          position: 'top',
+          align: 'end',
+          labels: {
+            usePointStyle: true,
+            pointStyle: 'circle',
+            padding: 20,
+            color: 'rgba(255,255,255,0.7)',
+            font: { family: "'DM Sans', sans-serif", size: 12, weight: '500' }
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(10,22,40,0.95)',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          padding: 14,
+          titleColor: 'rgba(255,255,255,0.5)',
+          titleFont: { family: "'DM Sans', sans-serif", size: 11 },
+          bodyColor: '#fff',
+          bodyFont: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: '600' },
+          callbacks: {
+            label: (ctx) => '  ' + ctx.dataset.label + ':  $' + fmt(ctx.parsed.y),
+            afterBody: (items) => {
+              if (items.length === 2) {
+                const gap = items[0].parsed.y - items[1].parsed.y;
+                if (gap > 0) return ['\n  💰 Savings:  $' + fmt(Math.round(gap))];
+              }
+              return [];
+            }
+          }
+        }
       },
       scales: {
-        x: { grid: { display: false }, ticks: { color: chartDefaults.tickColor, font: chartDefaults.font } },
-        y: { grid: { color: chartDefaults.gridColor }, ticks: { color: chartDefaults.tickColor, font: chartDefaults.font, callback: (v) => '$' + fmt(v) } }
+        x: {
+          grid: { display: false },
+          border: { display: false },
+          ticks: { color: 'rgba(255,255,255,0.35)', font: { family: "'DM Sans', sans-serif", size: 11 }, padding: 8 }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
+          border: { display: false, dash: [4,4] },
+          ticks: {
+            color: 'rgba(255,255,255,0.35)',
+            font: { family: "'DM Sans', sans-serif", size: 11 },
+            padding: 10,
+            maxTicksLimit: 5,
+            callback: (v) => '$' + (v >= 1000 ? Math.round(v/1000) + 'k' : v)
+          }
+        }
       }
     }
   });
@@ -1852,7 +1999,9 @@ async function unlockContent() {
 
   document.getElementById('unlockOverlay').style.display = 'none';
   document.getElementById('blurTarget').classList.add('unlocked');
-  document.querySelector('.financing-grid').style.display = 'grid';
+  const fg = document.querySelector('.financing-grid');
+  fg.style.display = window.innerWidth <= 800 ? 'flex' : 'grid';
+  fg.classList.add('unlocked-grid');
   document.querySelector('.bottom-cta').style.display = 'block';
   renderFinancingGraphs();
 }
