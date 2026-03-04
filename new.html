@@ -76,14 +76,15 @@ nav{position:relative;z-index:10;display:flex;align-items:center;justify-content
 @keyframes epulse{0%,100%{opacity:1;box-shadow:0 0 6px var(--sun);transform:scale(1)}
   50%{opacity:.6;box-shadow:0 0 14px var(--sun);transform:scale(1.3)}}
 
-.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
-.hero-content{animation:fadeUp .7s var(--ease) .1s both}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:stretch}
+.hero-content{animation:fadeUp .7s var(--ease) .1s both;display:flex;flex-direction:column;justify-content:center}
+/* Smaller heading — less vertical weight in hero */
 .hero-h1{font-family:'Plus Jakarta Sans',sans-serif;
-  font-size:clamp(28px,4.5vw,46px);font-weight:800;line-height:1.13;
-  letter-spacing:-.025em;margin-bottom:20px}
+  font-size:clamp(22px,2.8vw,32px);font-weight:800;line-height:1.2;
+  letter-spacing:-.02em;margin-bottom:16px}
 .hero-h1 .hl{background:linear-gradient(135deg,var(--sun),var(--orange));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{font-size:16px;color:var(--text-2);line-height:1.7;margin-bottom:32px;max-width:460px}
+.hero-sub{font-size:15px;color:var(--text-2);line-height:1.7;margin-bottom:28px;max-width:440px}
 .hero-btns{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
 .btn-p{display:inline-flex;align-items:center;justify-content:center;gap:8px;
   padding:16px 28px;background:linear-gradient(135deg,var(--sun),var(--orange));
@@ -108,14 +109,19 @@ nav{position:relative;z-index:10;display:flex;align-items:center;justify-content
 .pav:first-child{margin-left:0}
 .ptxt{font-size:13px;color:var(--text-3)}
 .ptxt strong{color:var(--sun)}
-.hero-img-wrap{animation:fadeUp .7s var(--ease) .2s both}
-.hero-img-card{background:var(--card);border:1px solid var(--border);
-  border-radius:var(--r-xl);overflow:hidden;
-  box-shadow:0 32px 80px rgba(0,0,0,.4);position:relative}
-.hero-img-card::before{content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(245,166,35,.06) 0%,transparent 50%);
-  pointer-events:none;z-index:1}
-.hero-img-card img{width:100%;display:block}
+/* Image side: bg-cover div fills full row height exactly like the original Webflow site */
+.hero-img-wrap{animation:fadeUp .7s var(--ease) .2s both;display:flex;flex-direction:column;align-self:stretch}
+.hero-img-card{
+  flex:1;min-height:420px;
+  border:1px solid var(--border);border-radius:var(--r-xl);
+  box-shadow:0 32px 80px rgba(0,0,0,.4);position:relative;overflow:hidden;
+  background-image:url('https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/69a331f612f85cc9d6f01712_qwe.jpg');
+  background-size:cover;background-position:top center}
+.hero-img-card::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 55%,rgba(10,22,40,.8) 100%);
+  pointer-events:none}
+/* Hide the actual <img> tag — background handles the photo */
+.hero-img-card img{display:none}
 .img-label{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
   background:rgba(10,22,40,.85);backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.12);color:var(--text-2);
@@ -130,9 +136,21 @@ nav{position:relative;z-index:10;display:flex;align-items:center;justify-content
   -webkit-mask-image:linear-gradient(to right,transparent 0%,black 12%,black 88%,transparent 100%);
   mask-image:linear-gradient(to right,transparent 0%,black 12%,black 88%,transparent 100%)}
 .logos-track{display:flex;align-items:center;width:max-content}
-.logos-track img{height:22px;opacity:.3;filter:brightness(0) invert(1);
-  flex-shrink:0;transition:opacity .25s;margin:0 36px}
+/* Per-logo height normalisation so they all feel the same visual weight */
+.logos-track img{opacity:.32;filter:brightness(0) invert(1);
+  flex-shrink:0;transition:opacity .25s;margin:0 32px;
+  height:18px} /* default */
 .logos-track img:hover{opacity:.7}
+/* Wider/taller logos need to be shorter to match visual weight */
+.logos-track img[alt="Cloudflare"]{height:16px}
+.logos-track img[alt="iHeart"]{height:14px}
+.logos-track img[alt="Powtoon"]{height:20px}
+.logos-track img[alt="Sapient"]{height:16px}
+.logos-track img[alt="Cofenster"]{height:18px}
+.logos-track img[alt="WeMoney"]{height:18px}
+.logos-track img[alt="HumanFirst"]{height:16px}
+.logos-track img[alt="BePro"]{height:18px}
+.logos-track img[alt="Tiliter"]{height:16px}
 
 /* ─── SECTION TYPOGRAPHY ─────────────────────────────────── */
 .sec-lbl{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;
@@ -164,26 +182,31 @@ nav{position:relative;z-index:10;display:flex;align-items:center;justify-content
 
 /* ─── HOW IT WORKS — ANIMATED TIMELINE ──────────────────── */
 .steps{margin-top:56px;display:flex;flex-direction:column;gap:0;position:relative}
-/* The full-height vertical rail — clips using a JS-driven CSS variable */
-.steps::before{content:'';position:absolute;left:27px;top:0;bottom:0;width:2px;
-  background:rgba(255,255,255,.07);z-index:0}
-.step-line{position:absolute;left:27px;top:0;width:2px;
-  background:linear-gradient(to bottom,var(--sun),rgba(245,166,35,.2));
-  height:0;transition:height .6s var(--ease);z-index:1;border-radius:2px}
+/* Faint static rail — only visible between numbers, hidden behind the number circles via z-index */
+.steps::before{content:'';position:absolute;left:27px;top:28px;bottom:28px;width:2px;
+  background:rgba(255,255,255,.06);z-index:0}
+/* Animated gold fill — also clipped to between first and last number centres */
+.step-line{position:absolute;left:27px;top:28px;width:2px;
+  background:linear-gradient(to bottom,var(--sun),rgba(245,166,35,.15));
+  height:0;transition:height .5s var(--ease);z-index:1;border-radius:2px;
+  pointer-events:none}
 
 .step{display:grid;grid-template-columns:56px 1fr;gap:28px;
   padding-bottom:56px;position:relative;z-index:2}
 .step:last-child{padding-bottom:0}
+/* Number circle sits on top of both rail and fill line so line is never visible inside it */
 .snum{width:56px;height:56px;border-radius:50%;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
   font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;
-  background:var(--sky-mid);border:2px solid rgba(245,166,35,.25);
-  color:var(--text-3);box-shadow:0 0 0 4px var(--sky);
-  transition:border-color .4s,color .4s,box-shadow .4s,background .4s;
-  position:relative;z-index:2}
-.step.active .snum{background:linear-gradient(135deg,rgba(245,166,35,.2),rgba(255,107,43,.1));
-  border-color:rgba(245,166,35,.7);color:var(--sun-bright);
-  box-shadow:0 0 0 4px var(--sky),0 0 24px rgba(245,166,35,.25)}
+  background:var(--sky);border:2px solid rgba(255,255,255,.1);
+  color:var(--text-3);
+  /* thick sky-coloured halo punches a clean hole around the circle in the line */
+  box-shadow:0 0 0 6px var(--sky);
+  transition:border-color .4s,color .4s,background .4s;
+  position:relative;z-index:3}
+.step.active .snum{background:var(--sky-mid);
+  border-color:rgba(245,166,35,.65);color:var(--sun-bright);
+  box-shadow:0 0 0 6px var(--sky),0 0 20px rgba(245,166,35,.2)}
 .sbody{padding-top:10px}
 .shdr{margin-bottom:18px}
 .shdr h3{font-family:'Plus Jakarta Sans',sans-serif;
@@ -302,14 +325,13 @@ nav{position:relative;z-index:10;display:flex;align-items:center;justify-content
   font-size:13px;color:var(--text-3)}
 .trust-item svg{color:var(--sun);flex-shrink:0}
 
-/* ─── FAQ ────────────────────────────────────────────────── */
-.faq-list{margin-top:44px;display:flex;flex-direction:column;gap:4px}
+.faq-list{margin-top:44px;display:flex;flex-direction:column;gap:16px}
 .faq-item{background:var(--card);border:1px solid var(--border);
   border-radius:var(--r-md);overflow:hidden;
   transition:border-color .25s}
 .faq-item.open{border-color:rgba(245,166,35,.25)}
 .faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;
-  gap:16px;padding:20px 24px;background:none;border:none;cursor:pointer;
+  gap:16px;padding:22px 26px;background:none;border:none;cursor:pointer;
   text-align:left;font-family:'Plus Jakarta Sans',sans-serif;
   font-size:15px;font-weight:600;color:var(--text);transition:background .2s}
 .faq-q:hover{background:var(--hover)}
@@ -319,8 +341,9 @@ nav{position:relative;z-index:10;display:flex;align-items:center;justify-content
 .faq-item.open .faq-ico{transform:rotate(45deg);background:rgba(245,166,35,.15)}
 .faq-ico svg{color:var(--text-3);transition:color .25s}
 .faq-item.open .faq-ico svg{color:var(--sun)}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .4s var(--ease);padding:0 24px}
-.faq-ai{font-size:14px;color:var(--text-2);line-height:1.8;padding-bottom:22px}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s var(--ease);padding:0 26px}
+.faq-ai{font-size:14px;color:var(--text-2);line-height:1.8;
+  padding-top:8px;padding-bottom:26px}
 .faq-ai a{color:var(--sun);text-decoration:none}
 .faq-ai a:hover{text-decoration:underline}
 .faq-item.open .faq-a{max-height:500px}
@@ -343,9 +366,10 @@ footer{border-top:1px solid var(--border);max-width:var(--max);
 @media(max-width:800px){
   .hero{padding:40px 20px 60px}
   .wrap{padding:64px 20px}
-  .hero-grid{grid-template-columns:1fr;gap:40px}
-  .hero-img-wrap{order:-1}
-  .hero-img-card img{max-height:340px;object-fit:cover;object-position:top}
+  .hero-grid{grid-template-columns:1fr;gap:0;align-items:start}
+  .hero-img-wrap{order:-1;display:block}
+  .hero-img-card{min-height:300px;height:300px;border-radius:var(--r-lg) var(--r-lg) 0 0;border-bottom:none}
+  .hero-content{padding:24px 0 0}
   .prob-grid{grid-template-columns:1fr}
   .math-grid{grid-template-columns:1fr}
   .step{grid-template-columns:48px 1fr;gap:20px}
@@ -361,10 +385,11 @@ footer{border-top:1px solid var(--border);max-width:var(--max);
   .bcta-wrap{padding:60px 20px}
 }
 @media(max-width:480px){
-  .hero-h1{font-size:26px}
-  .sec-h2{font-size:21px}
+  .hero-h1{font-size:22px}
+  .hero-img-card{min-height:240px;height:240px}
+  .sec-h2{font-size:20px}
   .pnum{font-size:40px}
-  .faq-q{font-size:14px;padding:16px 18px}
+  .faq-q{font-size:14px;padding:18px}
   .bcard{padding:32px 16px}
   .bcard h2{font-size:22px}
   .bcard-trust{gap:16px}
@@ -656,8 +681,8 @@ footer{border-top:1px solid var(--border);max-width:var(--max);
       <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/69793ef08cc84fc01635b58c_strategy.png" alt="" style="height:56px;display:block;margin:0 auto">
     </span>
     <h2>Turn Website Visitors Into<br>Qualified Appointments</h2>
-    <p class="sub">You're already paying for the traffic. Right now it's leaving without converting.</p>
-    <p class="sub2">One 30-minute call is all it takes. I'll install the tool, brand it to your site, and connect it to your CRM — then watch your lead quality go up while your cost per acquisition goes down.</p>
+    <p class="sub">You're already getting traffic. Right now most of it is leaving without ever raising a hand.</p>
+    <p class="sub2">On this free strategy call, we'll look at your current site together, talk through how the tool works, and figure out whether it's the right fit for your business — no pressure, no pitch.</p>
     <div class="bcard-btns">
       <a href="https://calendly.com/palashrajput/30min/" target="_blank" class="btn-p" style="font-size:17px;padding:18px 36px">
         📞 Book a Free Strategy Call
@@ -670,19 +695,19 @@ footer{border-top:1px solid var(--border);max-width:var(--max);
     <div class="bcard-trust">
       <div class="trust-item">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        No monthly fees
+        Free — no commitment
       </div>
       <div class="trust-item">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        Installed in 1 week
+        30 minutes
       </div>
       <div class="trust-item">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        You own it forever
+        See if it's a fit first
       </div>
       <div class="trust-item">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        Works on any platform
+        No pressure, no pitch
       </div>
     </div>
   </div>
@@ -759,27 +784,70 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
   const steps = Array.from(document.querySelectorAll('.step'));
   if (!container || !line || !steps.length) return;
 
-  function updateSteps() {
-    const containerRect = container.getBoundingClientRect();
-    const winH = window.innerHeight;
-    const scrollProgress = Math.max(0, Math.min(1,
-      (winH * 0.6 - containerRect.top) / containerRect.height
-    ));
-    line.style.height = (scrollProgress * containerRect.height) + 'px';
+  // The line runs from the centre of the first number to the centre of the last
+  // We measure these offsets relative to the container top
+  function getLineRange() {
+    const containerTop = container.getBoundingClientRect().top + window.scrollY;
+    const firstNum = steps[0].querySelector('.snum');
+    const lastNum  = steps[steps.length - 1].querySelector('.snum');
+    const firstRect = firstNum.getBoundingClientRect();
+    const lastRect  = lastNum.getBoundingClientRect();
+    const start = firstRect.top + firstRect.height / 2 + window.scrollY - containerTop;
+    const end   = lastRect.top  + lastRect.height  / 2 + window.scrollY - containerTop;
+    return { start, end, total: end - start };
+  }
 
-    steps.forEach((step, i) => {
-      const rect = step.getBoundingClientRect();
-      const midpoint = rect.top + rect.height * 0.3;
-      if (midpoint < winH * 0.75) {
+  // Position the rail to span exactly start→end
+  function positionRail() {
+    const { start, total } = getLineRange();
+    // Move the static ::before pseudo via a sibling element approach:
+    // We control both rail and fill via .step-line and its sibling bg
+    container.style.setProperty('--line-top',  start + 'px');
+    container.style.setProperty('--line-total', total + 'px');
+    // Update static rail directly on steps::before via injected style
+    if (!document._railStyle) {
+      const s = document.createElement('style');
+      document.head.appendChild(s);
+      document._railStyle = s;
+    }
+    document._railStyle.textContent = `
+      #stepsContainer::before {
+        top: ${start}px !important;
+        height: ${total}px !important;
+        bottom: auto !important;
+      }
+      #stepLine {
+        top: ${start}px !important;
+      }
+    `;
+  }
+
+  function updateSteps() {
+    positionRail();
+    const { start, total } = getLineRange();
+    const containerTop = container.getBoundingClientRect().top + window.scrollY;
+    const viewportMid = window.scrollY + window.innerHeight * 0.65;
+
+    // Progress: how far down the line the viewport has travelled (0→1)
+    const scrolled = viewportMid - (containerTop + start);
+    const progress = Math.max(0, Math.min(1, scrolled / total));
+    line.style.height = (progress * total) + 'px';
+
+    // Activate each step when its number centre crosses viewport 65%
+    steps.forEach(step => {
+      const num = step.querySelector('.snum');
+      const numCentre = num.getBoundingClientRect().top + num.offsetHeight / 2;
+      if (numCentre < window.innerHeight * 0.72) {
         step.classList.add('active');
       }
     });
   }
 
   window.addEventListener('scroll', updateSteps, { passive: true });
-  window.addEventListener('resize', updateSteps, { passive: true });
-  // Trigger on load
-  setTimeout(updateSteps, 100);
+  window.addEventListener('resize', () => { positionRail(); updateSteps(); }, { passive: true });
+  // Run after fonts/images settle
+  setTimeout(updateSteps, 200);
+  window.addEventListener('load', updateSteps);
 })();
 </script>
 </body>
