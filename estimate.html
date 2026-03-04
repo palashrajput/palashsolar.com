@@ -1247,7 +1247,7 @@ body {
 <div class="calc-wrapper">
 
   <!-- ===================== HEADER ===================== -->
-  <div class="calc-header">
+  <div class="calc-header" id="calcHero">
     <div class="badge">
       <span class="badge-dot"></span>
       AI-Powered Estimate
@@ -1692,6 +1692,9 @@ function showWebflowHeading() {
       }
     });
   } catch(e) {}
+  // Restore the in-page heading
+  const hero = document.getElementById('calcHero');
+  if (hero) hero.style.display = '';
 }
 
 // ===============================
@@ -1726,6 +1729,7 @@ async function startCalculation() {
   hideWebflowHeading();
   setStep(2);
   document.getElementById('step1-form').style.display = 'none';
+  document.getElementById('calcHero').style.display = 'none';
   document.getElementById('step2-loading').style.display = 'flex';
   document.getElementById('loadingFact').textContent = facts[Math.floor(Math.random() * facts.length)];
 
