@@ -95,29 +95,7 @@ body {
   50% { opacity: 1; transform: translateX(-50%) scale(1.08); }
 }
 
-/* Floating sun rays */
-.sun-rays {
-  position: absolute;
-  top: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 400px;
-  height: 400px;
-  opacity: 0.04;
-}
-.sun-rays::before, .sun-rays::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-conic-gradient(from 0deg, #F5A623 0deg 10deg, transparent 10deg 30deg);
-  border-radius: 50%;
-  animation: spin-slow 60s linear infinite;
-}
-.sun-rays::after {
-  animation: spin-slow 90s linear infinite reverse;
-  opacity: 0.5;
-}
-@keyframes spin-slow { to { transform: rotate(360deg); } }
+
 
 /* =============================================
    WRAPPER
@@ -1262,7 +1240,7 @@ body {
 
 <!-- Background layers -->
 <div class="bg-canvas">
-  <div class="sun-rays"></div>
+
 </div>
 
 <!-- Main wrapper -->
