@@ -1259,15 +1259,17 @@ body {
   animation: bannerShimmer 4s ease-in-out infinite;
 }
 @keyframes bannerShimmer { 0%,100%{transform:translateX(-100%)} 50%{transform:translateX(100%)} }
-/* Outer row just handles the background, no padding */
+/* Outer row — max-width container, centred */
 .banner-row {
   display: flex; align-items: center; justify-content: center;
   position: relative; z-index: 1;
+  max-width: 860px; margin: 0 auto; width: 100%;
+  padding: 0 20px;
 }
-/* Inner content — max-width container, text left, X right */
+/* Inner container — fills the row */
 .banner-inner {
-  flex: 1; display: flex; align-items: center; justify-content: space-between;
-  gap: 10px; padding: 14px 24px; max-width: 860px; width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding: 14px 0; width: 100%;
   min-width: 0;
 }
 .banner-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0;
@@ -2536,9 +2538,7 @@ window.addEventListener('beforeunload', showWebflowHeading);
   var phrases = [
     'One-time setup. No monthly fees.',
     'Fully branded to your logo & colors.',
-    'Connected to your CRM automatically.',
-    'Live on your website in 1 week.',
-    'No coding. No subscriptions. Ever.'
+    'Connected to your CRM automatically.'
   ];
   var i = 0;
   var el = document.getElementById('bannerCycle');
