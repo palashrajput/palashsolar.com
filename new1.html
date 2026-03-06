@@ -272,7 +272,9 @@ nav{position:relative;z-index:10;display:flex;align-items:center;justify-content
 
 /* ─── PRICING ────────────────────────────────────────────── */
 .pricing-hdr{text-align:center;margin-bottom:40px}
-.pricing-wrap{max-width:660px;margin:0 auto}
+.pricing-wrap{max-width:660px;margin:0 auto;width:100%}
+.pplan{display:block;width:100%}
+.pplan .pcard{width:100%;box-sizing:border-box}
 .pcard{background:var(--card);border:1px solid var(--border);
   border-radius:var(--r-xl);overflow:hidden;
   box-shadow:0 32px 80px rgba(0,0,0,.35);position:relative}
@@ -282,7 +284,7 @@ nav{position:relative;z-index:10;display:flex;align-items:center;justify-content
   justify-content:space-between;flex-wrap:wrap;gap:20px;
   border-bottom:1px solid var(--border)}
 .pname{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800}
-.psub{font-size:13px;color:var(--text-3);margin-top:6px;max-width:420px;line-height:1.6}
+.psub{font-size:13px;color:var(--text-3);margin-top:6px;max-width:380px;line-height:1.6}
 .pamt{text-align:right;flex-shrink:0}
 .pnum{font-family:'Plus Jakarta Sans',sans-serif;font-size:48px;font-weight:800;
   background:linear-gradient(135deg,var(--sun-bright),var(--orange));
