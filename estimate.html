@@ -1244,9 +1244,89 @@ body {
 .pac-item-query { color: #fff !important; font-size: 14px !important; }
 .pac-matched { color: var(--sun) !important; font-weight: 600 !important; }
 .pac-logo::after { display: none !important; }
+
+/* TOP ANNOUNCEMENT BANNER */
+/* Banner: full-width fixed bar, X pinned to far right edge */
+#top-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: linear-gradient(135deg, #0F2040 0%, #1A3260 50%, #0F2040 100%);
+  border-bottom: 1px solid rgba(245,166,35,0.25); overflow: hidden;
+  cursor: pointer;
+}
+#top-banner::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent 0%, rgba(245,166,35,0.06) 50%, transparent 100%);
+  animation: bannerShimmer 4s ease-in-out infinite;
+}
+@keyframes bannerShimmer { 0%,100%{transform:translateX(-100%)} 50%{transform:translateX(100%)} }
+/* Outer row just handles the background, no padding */
+.banner-row {
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 1;
+}
+/* Inner content — max-width container, text left, X right */
+.banner-inner {
+  flex: 1; display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding: 11px 24px; max-width: 860px; width: 100%;
+  min-width: 0;
+}
+.banner-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0;
+  background:#F5A623; box-shadow:0 0 8px #F5A623; animation:bdpulse 1.8s ease-in-out infinite; }
+@keyframes bdpulse { 0%,100%{opacity:1;transform:scale(1);box-shadow:0 0 5px #F5A623} 50%{opacity:.5;transform:scale(1.4);box-shadow:0 0 12px #F5A623} }
+.banner-text {
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: rgba(255,255,255,0.75);
+  line-height: 1.4; margin: 0; text-decoration: none; display: flex;
+  align-items: center; gap: 0; flex-wrap: nowrap; min-width: 0;
+}
+.banner-text strong { color: #fff; font-weight: 600; }
+/* Fixed-width container for cycling text — prevents layout shift */
+.banner-cycle-wrap {
+  display: inline-block;
+  width: 260px;
+  flex-shrink: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.banner-cycle { color: #FFD166; font-weight: 600; transition: opacity 0.4s ease; display: inline-block; }
+.banner-cycle.fade-out { opacity: 0; }
+.banner-cycle.fade-in  { opacity: 0; }
+.banner-cycle.visible  { opacity: 1; }
+@media(max-width:600px){
+  .banner-text { font-size: 12px; }
+  .banner-cycle-wrap { width: 200px; }
+  .calc-wrapper { padding-top: 80px; }
+}
+/* X inside container on the right */
+.banner-dismiss {
+  flex-shrink: 0;
+  background: none; border: none; color: rgba(255,255,255,0.3);
+  cursor: pointer; font-size: 18px; line-height: 1; padding: 4px 2px;
+  transition: color .2s;
+}
+.banner-dismiss:hover { color: rgba(255,255,255,0.7); }
+/* Push content below banner + add breathing room above AI badge */
+.calc-wrapper { padding-top: 86px; }
+@media(max-width:600px){
+  .banner-text { font-size: 12px; }
+  .calc-wrapper { padding-top: 80px; }
+}
 </style>
 </head>
 <body>
+<!-- TOP ANNOUNCEMENT BANNER -->
+<div id="top-banner">
+  <div class="banner-row">
+    <a href="https://palashsolar.com" target="_blank" class="banner-inner" style="text-decoration:none">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <span class="banner-dot"></span>
+        <p class="banner-text">
+          <strong>Hey Solar Installer &#128075;</strong>&nbsp;&mdash;&nbsp;Want this exact tool on your site?&nbsp;<span class="banner-cycle-wrap"><span class="banner-cycle visible" id="bannerCycle">One-time setup. No monthly fees.</span></span>
+        </p>
+      </div>
+      <button class="banner-dismiss" onclick="event.preventDefault();event.stopPropagation();document.getElementById('top-banner').style.display='none';document.querySelector('.calc-wrapper').style.paddingTop='0'" title="Dismiss">&times;</button>
+    </a>
+  </div>
+</div>
 
 <!-- Background layers -->
 <div class="bg-canvas">
@@ -2450,5 +2530,38 @@ window.addEventListener('beforeunload', showWebflowHeading);
 })();
 </script>
 
+
+<script>
+(function() {
+  var phrases = [
+    'One-time setup. No monthly fees.',
+    'Fully branded to your logo & colors.',
+    'Connected to your CRM automatically.',
+    'Live on your website in 1 week.',
+    'No coding. No subscriptions. Ever.'
+  ];
+  var i = 0;
+  var el = document.getElementById('bannerCycle');
+  if (!el) return;
+  setInterval(function() {
+    // fade out
+    el.classList.remove('visible');
+    el.classList.add('fade-out');
+    setTimeout(function() {
+      // swap text
+      i = (i + 1) % phrases.length;
+      el.textContent = phrases[i];
+      // position below, ready to fade in
+      el.classList.remove('fade-out');
+      el.classList.add('fade-in');
+      // force reflow
+      void el.offsetWidth;
+      // fade in
+      el.classList.remove('fade-in');
+      el.classList.add('visible');
+    }, 420);
+  }, 2800);
+})();
+</script>
 </body>
 </html>
