@@ -110,6 +110,10 @@ body {
   max-width: 860px;
   margin: 0 auto;
   padding: 56px 20px 80px;
+  transition: max-width 0.35s cubic-bezier(.4,0,.2,1);
+}
+.calc-wrapper.narrow {
+  max-width: 750px;
 }
 
 /* =============================================
@@ -1349,7 +1353,7 @@ body {
 </div>
 
 <!-- Main wrapper -->
-<div class="calc-wrapper">
+<div class="calc-wrapper narrow" id="calcWrapper">
 
   <!-- ===================== HEADER ===================== -->
   <div class="calc-header" id="calcHero">
@@ -1890,6 +1894,7 @@ function _nextFact() {
 function resetCalculator() {
   document.getElementById('step3-results').style.display = 'none';
   document.getElementById('step1-form').style.display = 'block';
+  document.getElementById('calcWrapper').classList.add('narrow');
   setStep(1);
   showWebflowHeading();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1976,6 +1981,7 @@ async function startCalculation() {
   document.getElementById('step1-form').style.display = 'none';
   document.getElementById('calcHeroText').style.display = 'none';
   document.getElementById('step2-loading').style.display = 'flex';
+  document.getElementById('calcWrapper').classList.remove('narrow');
   _showNormal();
   _startFactCycle();
 
