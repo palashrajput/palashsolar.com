@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Solar Calculator for Installers | Turn Traffic Into Qualified Appointments</title>
+<meta name="description" content="Instead of forcing a call, give homeowners the answers they want — and get better leads in return">
+<link rel="shortcut icon" href="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696c2c33b5f6aa3cbcbde1d9_32.png" type="image/x-icon">
+<link rel="apple-touch-icon" href="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696c2c35a4ddc391eea34465_256.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://t.contentsquare.net/uxa/beb8363c8d8d8.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sun:#F5A623;--sun-bright:#FFD166;--orange:#FF6B2B;
+  --sky:#0A1628;--sky-mid:#0F2040;--sky-light:#1A3260;
+  --text:#FFFFFF;--text-2:rgba(255,255,255,.65);--text-3:rgba(255,255,255,.38);
+  --card:rgba(255,255,255,.055);--border:rgba(255,255,255,.09);--hover:rgba(255,255,255,.085);
+  --green:#06D6A0;--blue:#4A9FFF;--red:#FF5A5A;
+  --r-sm:10px;--r-md:16px;--r-lg:24px;--r-xl:32px;
+  --ease:cubic-bezier(.4,0,.2,1);--max:900px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--sky);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ─── STATIC BG (no rotating rays) ─────────────────────── */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg::before{content:'';position:absolute;top:-20%;left:50%;transform:translateX(-50%);
+  width:900px;height:900px;
+  background:radial-gradient(ellipse,rgba(245,166,35,.09) 0%,rgba(255,107,43,.04) 40%,transparent 70%)}
+.bg::after{content:'';position:absolute;bottom:-10%;right:-5%;
+  width:600px;height:600px;
+  background:radial-gradient(ellipse,rgba(74,159,255,.05) 0%,transparent 65%)}
+
+/* ─── LAYOUT ─────────────────────────────────────────────── */
+.page{position:relative;z-index:1}
+.wrap{max-width:var(--max);margin:0 auto;padding:80px 24px}
+.divider{max-width:var(--max);margin:0 auto;height:1px;background:var(--border)}
+
+/* ─── REVEAL ANIMATION ───────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ─── NAV ────────────────────────────────────────────────── */
+nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;
+  max-width:var(--max);margin:0 auto;padding:22px 24px}
+.nav-logo img{height:28px;filter:brightness(0) invert(1);opacity:.9}
+.nav-links{display:flex;align-items:center;gap:8px}
+.nav-link{font-size:14px;font-weight:500;color:var(--text-2);text-decoration:none;
+  padding:8px 16px;border-radius:100px;transition:color .2s,background .2s}
+.nav-link:hover{color:var(--text);background:var(--card)}
+.nav-sep{width:1px;height:16px;background:var(--border);margin:0 4px}
+.nav-cta{font-size:14px;font-weight:700;color:#fff;text-decoration:none;
+  padding:9px 20px;background:linear-gradient(135deg,var(--sun),var(--orange));
+  border-radius:100px;box-shadow:0 4px 16px rgba(245,166,35,.3);
+  transition:transform .2s,box-shadow .2s}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(245,166,35,.4)}
+
+/* ─── HERO ───────────────────────────────────────────────── */
+.hero{max-width:var(--max);margin:0 auto;padding:56px 24px 80px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,rgba(245,166,35,.15),rgba(255,107,43,.1));
+  border:1px solid rgba(245,166,35,.4);color:var(--sun-bright);
+  font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:7px 16px;border-radius:100px;margin-bottom:28px;
+  position:relative;overflow:hidden;box-shadow:0 0 20px rgba(245,166,35,.12);
+  animation:fadeUp .6s var(--ease) both}
+.eyebrow::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);
+  animation:shimmer 3s ease-in-out 1s infinite}
+@keyframes shimmer{0%{left:-100%}50%,100%{left:160%}}
+.edot{width:7px;height:7px;background:var(--sun-bright);border-radius:50%;
+  box-shadow:0 0 8px var(--sun);animation:epulse 1.8s ease-in-out infinite}
+@keyframes epulse{0%,100%{opacity:1;box-shadow:0 0 6px var(--sun);transform:scale(1)}
+  50%{opacity:.6;box-shadow:0 0 14px var(--sun);transform:scale(1.3)}}
+
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:stretch}
+.hero-content{animation:fadeUp .7s var(--ease) .1s both;display:flex;flex-direction:column;justify-content:center}
+/* Smaller heading — less vertical weight in hero */
+.hero-h1{font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:clamp(22px,2.8vw,32px);font-weight:800;line-height:1.2;
+  letter-spacing:-.02em;margin-bottom:16px}
+.hero-h1 .hl{background:linear-gradient(135deg,var(--sun),var(--orange));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:15px;color:var(--text-2);line-height:1.7;margin-bottom:28px;max-width:440px}
+.hero-btns{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.btn-p{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:16px 28px;background:linear-gradient(135deg,var(--sun),var(--orange));
+  border:none;border-radius:var(--r-md);color:#fff;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;
+  cursor:pointer;text-decoration:none;box-shadow:0 8px 32px rgba(245,166,35,.35);
+  transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+.btn-p::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.15) 0%,transparent 60%);
+  opacity:0;transition:opacity .2s}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(245,166,35,.45)}
+.btn-p:hover::after{opacity:1}
+.btn-s{display:inline-flex;align-items:center;gap:8px;
+  font-size:14px;font-weight:500;color:var(--text-2);
+  text-decoration:none;transition:color .2s;padding:4px 0}
+.btn-s:hover{color:var(--text)}
+.hero-proof{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:28px}
+.pavs{display:flex}
+.pav{width:32px;height:32px;border-radius:50%;border:2px solid var(--sky);
+  background:linear-gradient(135deg,var(--sky-light),var(--sky-mid));
+  margin-left:-8px;font-size:13px;display:flex;align-items:center;justify-content:center}
+.pav:first-child{margin-left:0}
+.ptxt{font-size:13px;color:var(--text-3)}
+.ptxt strong{color:var(--sun)}
+/* Image side: bg-cover div fills full row height exactly like the original Webflow site */
+.hero-img-wrap{animation:fadeUp .7s var(--ease) .2s both;display:flex;flex-direction:column;align-self:stretch}
+.hero-img-card{
+  flex:1;min-height:420px;
+  border-radius:var(--r-xl);
+  box-shadow:0 32px 80px rgba(0,0,0,.4);position:relative;overflow:hidden;
+  background-image:url('https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/69a331f612f85cc9d6f01712_qwe.jpg');
+  background-size:cover;background-position:top center}
+.hero-img-card::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 55%,rgba(10,22,40,.8) 100%);
+  pointer-events:none}
+/* Hide the actual <img> tag — background handles the photo */
+.hero-img-card img{display:none}
+.img-label{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+  background:rgba(10,22,40,.85);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.12);color:var(--text-2);
+  font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  padding:6px 14px;border-radius:100px;white-space:nowrap;z-index:2}
+
+/* ─── LOGO SCROLL ────────────────────────────────────────── */
+.logos{max-width:var(--max);margin:0 auto;padding:0 24px 80px}
+.logos-lbl{text-align:center;font-size:12px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:24px}
+.logos-outer{overflow:hidden;
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,black 12%,black 88%,transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0%,black 12%,black 88%,transparent 100%)}
+.logos-track{display:flex;align-items:center;width:max-content}
+/* Per-logo height normalisation so they all feel the same visual weight */
+.logos-track img{opacity:.32;filter:brightness(0) invert(1);
+  flex-shrink:0;transition:opacity .25s;margin:0 32px;
+  height:18px} /* default */
+.logos-track img:hover{opacity:.7}
+/* Wider/taller logos need to be shorter to match visual weight */
+.logos-track img[alt="Cloudflare"]{height:26px}
+.logos-track img[alt="iHeart"]{height:14px}
+.logos-track img[alt="Powtoon"]{height:15px}
+.logos-track img[alt="Sapient"]{height:27px}
+.logos-track img[alt="Cofenster"]{height:20px}
+.logos-track img[alt="WeMoney"]{height:22px}
+.logos-track img[alt="HumanFirst"]{height:16px}
+.logos-track img[alt="BePro"]{height:24px}
+.logos-track img[alt="Tiliter"]{height:20px}
+
+/* ─── SECTION TYPOGRAPHY ─────────────────────────────────── */
+.sec-lbl{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--sun);margin-bottom:12px}
+.sec-h2{font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:clamp(22px,3.5vw,34px);font-weight:700;line-height:1.25;
+  letter-spacing:-.01em;margin-bottom:16px}
+.hl-red{background:linear-gradient(135deg,var(--red),#FF8A65);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hl-sun{background:linear-gradient(135deg,var(--sun),var(--orange));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ─── PROBLEM CARDS ──────────────────────────────────────── */
+.prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:44px}
+.prob-card{background:var(--card);border:1px solid rgba(255,90,90,.2);
+  border-radius:var(--r-lg);padding:32px;
+  transition:transform .25s,box-shadow .25s,border-color .25s}
+.prob-card:hover{transform:translateY(-4px);
+  box-shadow:0 16px 48px rgba(0,0,0,.3);border-color:rgba(255,90,90,.4)}
+.prob-icon{width:48px;height:48px;border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin-bottom:20px;
+  background:rgba(255,90,90,.1);border:1px solid rgba(255,90,90,.2)}
+.prob-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--red);margin-bottom:8px}
+.prob-card h3{font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:18px;font-weight:700;margin-bottom:14px}
+.prob-card p{font-size:14px;color:var(--text-2);line-height:1.75}
+
+/* ─── HOW IT WORKS — ANIMATED TIMELINE ──────────────────── */
+.steps{margin-top:56px;display:flex;flex-direction:column;gap:0;position:relative}
+/* Faint static rail — only visible between numbers, hidden behind the number circles via z-index */
+.steps::before{content:'';position:absolute;left:27px;top:28px;bottom:28px;width:2px;
+  background:rgba(255,255,255,.06);z-index:0}
+/* Animated gold fill — also clipped to between first and last number centres */
+.step-line{position:absolute;left:27px;top:28px;width:2px;
+  background:linear-gradient(to bottom,var(--sun),rgba(245,166,35,.15));
+  height:0;transition:height .5s var(--ease);z-index:1;border-radius:2px;
+  pointer-events:none}
+
+.step{display:grid;grid-template-columns:56px 1fr;gap:28px;
+  padding-bottom:56px;position:relative;z-index:2}
+.step:last-child{padding-bottom:0}
+/* Number circle sits on top of both rail and fill line so line is never visible inside it */
+.snum{width:56px;height:56px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;
+  background:var(--sky);border:2px solid rgba(255,255,255,.1);
+  color:var(--text-3);
+  /* thick sky-coloured halo punches a clean hole around the circle in the line */
+  box-shadow:0 0 0 6px var(--sky);
+  transition:border-color .4s,color .4s,background .4s;
+  position:relative;z-index:3}
+.step.active .snum{background:var(--sky-mid);
+  border-color:rgba(245,166,35,.65);color:var(--sun-bright);
+  box-shadow:0 0 0 6px var(--sky),0 0 20px rgba(245,166,35,.2)}
+.sbody{padding-top:10px}
+.shdr{margin-bottom:18px}
+.shdr h3{font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:20px;font-weight:700;margin-bottom:8px;
+  color:var(--text-3);transition:color .4s}
+.step.active .shdr h3{color:var(--text)}
+.shdr p{font-size:14px;color:var(--text-3);line-height:1.65;transition:color .4s}
+.step.active .shdr p{color:var(--text-2)}
+.scard{background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:22px 26px;margin-top:4px;
+  opacity:0;transform:translateY(12px);
+  transition:opacity .5s var(--ease),transform .5s var(--ease),border-color .4s}
+.step.active .scard{opacity:1;transform:translateY(0)}
+.step.active .scard.cash-c{border-color:rgba(6,214,160,.25)}
+.step.active .scard.blue-c{border-color:rgba(74,159,255,.2)}
+.slist{list-style:none;display:flex;flex-direction:column;gap:10px}
+.slist li{display:flex;align-items:flex-start;gap:10px;
+  font-size:14px;color:var(--text-2);line-height:1.5}
+.slist li::before{content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--sun);margin-top:6px;flex-shrink:0}
+.snote{margin-top:16px;padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.06);
+  font-size:13px;color:var(--text-3);line-height:1.65}
+.snote strong{color:var(--text-2)}
+.sresult{display:flex;align-items:center;gap:14px;
+  background:linear-gradient(135deg,rgba(6,214,160,.1),rgba(74,159,255,.06));
+  border:1px solid rgba(6,214,160,.25);border-radius:var(--r-md);
+  padding:18px 22px;margin-top:16px;
+  font-size:15px;font-weight:600;color:var(--green);
+  font-family:'Plus Jakarta Sans',sans-serif;line-height:1.5}
+
+/* ─── MATH SECTION ───────────────────────────────────────── */
+.math-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
+.mcard{background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:28px}
+.mcard.good{background:linear-gradient(135deg,rgba(6,214,160,.1),rgba(74,159,255,.06));
+  border-color:rgba(6,214,160,.3)}
+.mlbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:14px}
+.mcard.good .mlbl{color:var(--green)}
+.meq{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;
+  color:var(--text-2);line-height:1.8}
+.mres{font-size:26px;font-weight:800;margin-top:12px;
+  font-family:'Plus Jakarta Sans',sans-serif}
+.mcard.good .mres{color:var(--green)}
+.mcard:not(.good) .mres{color:var(--red)}
+.mhl{background:linear-gradient(135deg,rgba(245,166,35,.12),rgba(255,107,43,.08));
+  border:1px solid rgba(245,166,35,.3);border-radius:var(--r-md);
+  padding:22px 28px;margin-top:20px;text-align:center;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;
+  color:var(--sun);line-height:1.5}
+
+/* ─── PRICING ────────────────────────────────────────────── */
+.pricing-hdr{text-align:center;margin-bottom:40px}
+.pricing-wrap{max-width:660px;margin:0 auto}
+.pcard{background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-xl);overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,.35);position:relative}
+.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--sun),var(--orange))}
+.ptop{padding:32px;display:flex;align-items:flex-start;
+  justify-content:space-between;flex-wrap:wrap;gap:20px;
+  border-bottom:1px solid var(--border)}
+.pname{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800}
+.psub{font-size:13px;color:var(--text-3);margin-top:6px;max-width:280px;line-height:1.5}
+.pamt{text-align:right;flex-shrink:0}
+.pnum{font-family:'Plus Jakarta Sans',sans-serif;font-size:48px;font-weight:800;
+  background:linear-gradient(135deg,var(--sun-bright),var(--orange));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;line-height:1}
+.pper{font-size:12px;color:var(--text-3);margin-top:4px}
+.pfeatures{padding:28px 32px;border-bottom:1px solid var(--border)}
+.ftitle{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:20px}
+.flist{list-style:none;display:flex;flex-direction:column;gap:14px}
+.fitem{display:flex;align-items:flex-start;gap:12px;
+  font-size:14px;color:var(--text-2);line-height:1.55}
+.fcheck{width:20px;height:20px;border-radius:50%;
+  background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.3);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px}
+.fcheck svg{color:var(--green)}
+.fitem strong{color:var(--text)}
+.pfooter{padding:28px 32px}
+.ptimeline{font-size:14px;color:var(--text-2);line-height:1.65}
+.ptimeline strong{color:var(--text)}
+.ptimeline span{color:var(--text-3);font-size:13px}
+
+/* ─── BOTTOM CTA ─────────────────────────────────────────── */
+.bcta-wrap{max-width:var(--max);margin:0 auto;padding:80px 24px}
+.bcard{background:linear-gradient(135deg,rgba(245,166,35,.11) 0%,rgba(255,107,43,.08) 50%,rgba(74,159,255,.06) 100%);
+  border:1px solid rgba(245,166,35,.22);border-radius:var(--r-xl);
+  padding:60px 40px;text-align:center;position:relative;overflow:hidden}
+.bcard::before{content:'';position:absolute;top:-50%;left:50%;
+  transform:translateX(-50%);width:600px;height:600px;
+  background:radial-gradient(ellipse,rgba(245,166,35,.09),transparent 60%);
+  pointer-events:none}
+.bcard-icon{font-size:48px;display:block;margin-bottom:20px;
+  filter:drop-shadow(0 0 20px rgba(245,166,35,.5));position:relative}
+.bcard h2{font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:clamp(24px,3.5vw,36px);font-weight:800;
+  margin-bottom:16px;position:relative}
+.bcard .sub{font-size:16px;color:var(--text-2);line-height:1.7;
+  max-width:480px;margin:0 auto 16px;position:relative}
+.bcard .sub2{font-size:14px;color:var(--text-3);line-height:1.6;
+  max-width:420px;margin:0 auto 36px;position:relative}
+.bcard-btns{display:flex;flex-direction:column;align-items:center;gap:14px;position:relative}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;
+  font-size:14px;font-weight:500;color:var(--text-2);
+  text-decoration:none;padding:4px 0;transition:color .2s}
+.btn-outline:hover{color:var(--text)}
+.bcard-trust{display:flex;align-items:center;justify-content:center;
+  gap:24px;flex-wrap:wrap;margin-top:32px;padding-top:28px;
+  border-top:1px solid rgba(255,255,255,.07);position:relative}
+.trust-item{display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--text-3)}
+.trust-item svg{color:var(--sun);flex-shrink:0}
+
+.faq-list{margin-top:44px;display:flex;flex-direction:column;gap:16px}
+.faq-item{background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-md);overflow:hidden;
+  transition:border-color .25s}
+.faq-item.open{border-color:rgba(245,166,35,.25)}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:22px 26px;background:none;border:none;cursor:pointer;
+  text-align:left;font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:15px;font-weight:600;color:var(--text);transition:background .2s}
+.faq-q:hover{background:var(--hover)}
+.faq-ico{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.08);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  transition:transform .25s,background .25s}
+.faq-item.open .faq-ico{transform:rotate(45deg);background:rgba(245,166,35,.15)}
+.faq-ico svg{color:var(--text-3);transition:color .25s}
+.faq-item.open .faq-ico svg{color:var(--sun)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s var(--ease);padding:0 26px}
+.faq-ai{font-size:14px;color:var(--text-2);line-height:1.8;
+  padding-top:8px;padding-bottom:26px}
+.faq-ai a{color:var(--sun);text-decoration:none}
+.faq-ai a:hover{text-decoration:underline}
+.faq-item.open .faq-a{max-height:500px}
+
+/* ─── FOOTER ─────────────────────────────────────────────── */
+footer{border-top:1px solid var(--border);max-width:var(--max);
+  margin:0 auto;padding:28px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px}
+.footer-logo img{height:22px;filter:brightness(0) invert(1);opacity:.5;
+  transition:opacity .2s}
+.footer-logo img:hover{opacity:.8}
+.footer-copy{font-size:13px;color:var(--text-3)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-size:13px;color:var(--text-3);text-decoration:none;
+  transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:800px){
+  .hero{padding:40px 20px 60px}
+  .wrap{padding:64px 20px}
+  .hero-grid{grid-template-columns:1fr;gap:0;align-items:start}
+  .hero-img-wrap{order:-1;display:block}
+  .hero-img-card{min-height:300px;height:300px;border-radius:var(--r-lg) var(--r-lg) 0 0;border-bottom:none}
+  .hero-content{padding:24px 0 0}
+  .prob-grid{grid-template-columns:1fr}
+  .math-grid{grid-template-columns:1fr}
+  .step{grid-template-columns:48px 1fr;gap:20px}
+  .snum{width:48px;height:48px;font-size:18px}
+  .steps::before{left:23px}
+  .step-line{left:23px}
+  .ptop{flex-direction:column}
+  .pamt{text-align:left}
+  .pfeatures,.ptop,.pfooter{padding:20px}
+  .bcard{padding:44px 24px}
+  nav{padding:16px 20px}
+  .nav-link{display:none}
+  .bcta-wrap{padding:60px 20px}
+}
+@media(max-width:480px){
+  .hero-h1{font-size:22px}
+  .hero-img-card{min-height:240px;height:240px}
+  .sec-h2{font-size:20px}
+  .pnum{font-size:40px}
+  .faq-q{font-size:14px;padding:18px}
+  .bcard{padding:32px 16px}
+  .bcard h2{font-size:22px}
+  .bcard-trust{gap:16px}
+  .logos{padding:0 20px 60px}
+  footer{flex-direction:column;align-items:flex-start;gap:12px}
+}
+
+/* ── PRICING TABS ──────────────────────────────────────────── */
+.ptabs {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; margin: 0 auto 36px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 5px;
+  width: fit-content;
+}
+.ptab {
+  padding: 9px 24px; border-radius: 100px; border: none; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700;
+  transition: all 0.25s ease; background: none; color: var(--text-3);
+  white-space: nowrap;
+}
+.ptab.active {
+  background: linear-gradient(135deg, var(--sun), var(--orange));
+  color: #fff; box-shadow: 0 4px 16px rgba(245,166,35,.35);
+}
+.ptab:not(.active):hover { color: var(--text); background: rgba(255,255,255,0.06); }
+.pplan { display: none; }
+.pplan.active { display: block; }
+/* Managed badge */
+.managed-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 100px;
+  background: rgba(6,214,160,0.1); border: 1px solid rgba(6,214,160,0.25);
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--green); margin-bottom: 14px;
+}
+.managed-badge span { width:6px;height:6px;border-radius:50%;background:var(--green);animation:epulse 1.8s ease-in-out infinite; }
+/* Monthly price display */
+.pnum-mo { font-family:'Plus Jakarta Sans',sans-serif; font-size:48px; font-weight:800;
+  background:linear-gradient(135deg,var(--sun),var(--orange));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent; line-height:1; }
+.pper-mo { font-size:12px; color:var(--text-3); margin-top:4px; }
+.pper-mo strong { color: var(--text-2); }
+
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="page">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696cc2302a368dd983d942f1_Logo.svg" alt="Palash Solar">
+  </div>
+  <div class="nav-links">
+    <a href="#pricing" class="nav-link">See Pricing</a>
+    <div class="nav-sep"></div>
+    <a href="https://calendly.com/palashrajput/30min/" target="_blank" class="nav-cta">Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="eyebrow"><span class="edot"></span>For Solar Installers</div>
+  <div class="hero-grid">
+    <div class="hero-content">
+      <h1 class="hero-h1">Get Qualified Homeowner Leads From Your Existing Website Traffic <span class="hl">with AI</span></h1>
+      <p class="hero-sub">Stop hiding estimates behind a contact form. Give homeowners the instant answers they are looking for and get better appointments in return.</p>
+      <div class="hero-btns">
+        <a href="estimate.html" target="_blank" class="btn-p">👉 Test The Demo Tool</a>
+        <a href="https://www.loom.com/share/6ee9be635ba140b798562041aa72dfe8" target="_blank" class="btn-s">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Watch 2-Minute Video Walkthrough
+        </a>
+      </div>
+      <div class="hero-proof">
+        <div class="pavs">
+          <div class="pav">🏠</div><div class="pav">⚡</div><div class="pav">☀️</div>
+        </div>
+        <p class="ptxt">Trusted by solar installers — <strong>3× more leads</strong> from existing traffic</p>
+      </div>
+    </div>
+    <div class="hero-img-wrap">
+      <div class="hero-img-card">
+        <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/69a331f612f85cc9d6f01712_qwe.jpg" alt="Palash Rajput">
+        <div class="img-label">👋 I'm Palash</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGO SCROLL -->
+<div class="logos reveal">
+  <p class="logos-lbl">Trusted by teams at</p>
+  <div class="logos-outer">
+    <div class="logos-track" id="logoTrack">
+      <!-- 3 full copies for perfectly seamless loop — JS sets animation width -->
+      <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696c02db07cdda9b834f4085_Group%2024509.png" alt="Sapient">
+      <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696c0b82a85784598316ebb2_Cloudflare_Logo.svg.png" alt="Cloudflare">
+      <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696c02db07cdda9b834f4083_Group%2024504.png" alt="Powtoon">
+      <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696c02db07cdda9b834f4081_Group%2024508.png" alt="BePro">
+      <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696c02db07cdda9b834f407b_Group%2024507.png" alt="Tiliter">
+      <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696c0a47e260324cfccafda6_iHeartRadio_Horizontal_Logo_color_black.png" alt="iHeart">
+      <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696c09f5c283a7864d413519_Cofenster.png" alt="Cofenster">
+      <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696c02db07cdda9b834f407f_Group%2024502.png" alt="WeMoney">
+      <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696c02db07cdda9b834f4079_Group%2024511.png" alt="HumanFirst">
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<div class="wrap">
+  <p class="sec-lbl reveal">The Problem</p>
+  <h2 class="sec-h2 reveal">Homeowners don't land on your site ready to talk sales. They land with questions—and <span class="hl-red">your website usually can't answer them.</span> So they leave.</h2>
+  <div class="prob-grid">
+    <div class="prob-card reveal">
+      <div class="prob-icon">
+        <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/69793099d2a4c399c83713ef_cashier.png" alt="" style="height:28px;filter:brightness(0) invert(1);opacity:.7">
+      </div>
+      <p class="prob-eyebrow">Problem #1</p>
+      <h3>Stop Scaring Homeowners Away</h3>
+      <p>Most solar sites push visitors straight into a contact form. Some are worse—they ask for a zip code to "provide an estimate," then hit the homeowner with "we'll call you to discuss next steps."<br><br>To a homeowner, that feels like a bait-and-switch sales pitch—not help.</p>
+    </div>
+    <div class="prob-card reveal">
+      <div class="prob-icon">
+        <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/69792fd4ac7e053a4b7b55bd_bill.png" alt="" style="height:28px;filter:brightness(0) invert(1);opacity:.7">
+      </div>
+      <p class="prob-eyebrow">Problem #2</p>
+      <h3>Stop Losing Qualified Leads</h3>
+      <p>Whether visitors come from Google, Yelp, referrals, or paid ads—if they leave without understanding if solar works for their home, you've lost them. They bounce. You get nothing.<br><br>The competitor who answered their questions first gets the appointment.</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+<div class="wrap">
+  <p class="sec-lbl reveal">Why This Works</p>
+  <h2 class="sec-h2 reveal"><span class="hl-sun">Give Value First.</span> Get The Appointment Second.</h2>
+  <p style="font-size:15px;color:var(--text-2);line-height:1.75;margin-top:10px;" class="reveal">The Mega Solar Tool guides homeowners through a natural journey that builds trust before asking for contact info.</p>
+
+  <div class="steps" id="stepsContainer">
+    <div class="step-line" id="stepLine"></div>
+
+    <div class="step" data-step="0">
+      <div class="snum">1</div>
+      <div class="sbody">
+        <div class="shdr">
+          <h3>Stage 1: They Get Real Numbers — Instantly</h3>
+          <p>No forms, no "we'll call you." Homeowners type their address and monthly bill. Our AI does the rest — pulling real local utility rates, satellite roof data, and state incentives to deliver a personalised estimate in seconds.</p>
+        </div>
+        <div class="scard">
+          <ul class="slist">
+            <li>25-Year Savings projection for their exact address</li>
+            <li>Recommended System Size based on roof & usage</li>
+            <li>Payback Period with real local incentives applied</li>
+            <li>Property Value Boost estimate</li>
+            <li>Full Cost Breakdown with 30% Federal Tax Credit</li>
+            <li>Monthly Bill Comparison — before vs. after solar</li>
+          </ul>
+          <div class="snote"><strong>No email. No phone number. No waiting. No "we'll call you."</strong><br>Just an honest answer to their biggest questions — on the spot.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="1">
+      <div class="snum">2</div>
+      <div class="sbody">
+        <div class="shdr">
+          <h3>Stage 2: They See Something Worth Unlocking</h3>
+          <p>Below the instant results, a <strong>Personalised Financing Report</strong> appears — partially blurred. They can clearly see it's there. They just can't read the details yet. That contrast does the heavy lifting.</p>
+        </div>
+        <div class="scard blue-c">
+          <ul class="slist">
+            <li>Cash Purchase Analysis — net cost, lifetime ROI</li>
+            <li>$0-Down Loan Scenario — monthly vs. current bill</li>
+            <li>Lease / PPA Analysis — zero-risk comparison</li>
+            <li>Interactive 25-Year Cash Flow Graphs</li>
+          </ul>
+          <div class="snote">They can see what's inside — they just can't access it yet. That's the moment curiosity turns into intent.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="2">
+      <div class="snum">3</div>
+      <div class="sbody">
+        <div class="shdr">
+          <h3>Stage 3: They Give You Their Contact — Willingly</h3>
+          <p>To unlock the full financing breakdown, they enter their name, email, and phone. By this point, they've already seen that solar works for their home. They're not handing over their info reluctantly — they're asking for the details.</p>
+        </div>
+        <div class="sresult">
+          <span style="font-size:22px;flex-shrink:0">🎯</span>
+          <span><strong>The Result:</strong> They got real value first. You got a high-intent lead. Your CRM gets a notification the moment they unlock. Nobody felt tricked — and that's exactly why it converts.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- MATH -->
+<div class="wrap">
+  <p class="sec-lbl reveal">The Math</p>
+  <h2 class="sec-h2 reveal">If you're getting 300 visitors/month to your site:</h2>
+  <div class="math-grid">
+    <div class="mcard reveal">
+      <p class="mlbl">With a Contact Form</p>
+      <p class="meq">300 visitors × 2% conversion</p>
+      <p class="mres">= 6 leads / month</p>
+    </div>
+    <div class="mcard good reveal">
+      <p class="mlbl">With The Tool</p>
+      <p class="meq">300 visitors × 6% conversion</p>
+      <p class="mres">= 18 leads / month</p>
+    </div>
+  </div>
+  <div class="mhl reveal">That's <strong>12 extra appointments per month</strong> — from traffic you're already paying for.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PRICING -->
+<div class="wrap" id="pricing">
+  <div class="pricing-hdr reveal">
+    <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/69796020eb80698d2ce68c9a_goal.png" alt="" style="height:48px;margin:0 auto 16px;display:block;filter:drop-shadow(0 0 16px rgba(245,166,35,.4))">
+    <p class="sec-lbl" style="text-align:center">Simple Pricing.</p>
+    <h2 class="sec-h2" style="text-align:center;margin-top:8px">Pick the plan that<br>works for <span class="hl-sun">your business.</span></h2>
+  </div>
+
+  <!-- Tab switcher -->
+  <div class="ptabs reveal">
+    <button class="ptab active" onclick="switchPlan('onetime', this)">⭐ Own It — $497</button>
+    <button class="ptab" onclick="switchPlan('managed', this)">Managed — $49/mo</button>
+  </div>
+
+  <div class="pricing-wrap">
+
+    <!-- ── ONE-TIME PLAN ── -->
+    <div class="pplan active" id="plan-onetime">
+      <div class="pcard reveal">
+        <div class="ptop">
+          <div>
+            <div class="pname">Own It Forever</div>
+            <div class="psub">One payment. Yours to keep. The highest-converting lead tool in solar — branded to your site and live in 1 week.</div>
+          </div>
+          <div class="pamt">
+            <div class="pnum">$497</div>
+            <div class="pper">One-time · Own it forever</div>
+          </div>
+        </div>
+        <div class="pfeatures">
+          <p class="ftitle">Everything Included</p>
+          <ul class="flist">
+            <li class="fitem"><div class="fcheck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span><strong>Branding Customization:</strong> Custom-styled to match your logo, colors, and fonts — looks completely native to your site.</span></li>
+            <li class="fitem"><div class="fcheck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span><strong>Google Maps Integration:</strong> Satellite roof views so homeowners can see their own roof as they calculate.</span></li>
+            <li class="fitem"><div class="fcheck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span><strong>Instant Email Alerts:</strong> The moment someone completes their estimate, you get an email with their full details — while they're still on your site.</span></li>
+            <li class="fitem"><div class="fcheck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span><strong>Automatic Lead Capture:</strong> Every lead is logged automatically — name, address, bill amount, and estimate results — organised and ready for your follow-up.</span></li>
+            <li class="fitem"><div class="fcheck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span><strong>Zero Monthly Fees — Ever:</strong> Pay once, own it forever. Every lead it captures is pure profit with no ongoing cost to you.</span></li>
+          </ul>
+        </div>
+        <div class="pfooter">
+          <p class="ptimeline">Timeline: <strong>1 Week</strong> <span>(Total time required from you: just a 30-minute kickoff call)</span></p>
+          <div style="margin-top:22px;display:flex;flex-direction:column;gap:14px">
+            <p style="font-size:14px;color:var(--text-2);line-height:1.65">You've seen the demo — you know exactly what you're getting. I install it, brand it to your site, and wire up your lead alerts. Done in a week. One payment, no surprises, no subscriptions. Ever.</p>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:4px">
+              <a href="https://calendly.com/palashrajput/30min/" target="_blank" class="btn-p">Get Started →</a>
+              <a href="estimate.html" target="_blank" class="btn-s" style="font-size:13px">Try the demo first</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MANAGED PLAN ── -->
+    <div class="pplan" id="plan-managed">
+      <div class="pcard reveal" style="border-color:rgba(6,214,160,0.3)">
+        <div class="ptop">
+          <div>
+            <div class="managed-badge"><span></span>Fully Managed</div>
+            <div class="pname">Done For You</div>
+            <div class="psub">Everything runs on our servers. Zero technical setup on your end — you just get the leads.</div>
+          </div>
+          <div class="pamt">
+            <div class="pnum-mo">$49</div>
+            <div class="pper-mo">per month · <strong>cancel anytime</strong></div>
+            <div style="margin-top:10px;font-size:12px;color:var(--text-3)">+ <strong style="color:var(--text-2)">$100</strong> one-time setup fee</div>
+          </div>
+        </div>
+        <div class="pfeatures">
+          <p class="ftitle">Everything Included</p>
+          <ul class="flist">
+            <li class="fitem"><div class="fcheck" style="background:rgba(6,214,160,0.15);border-color:rgba(6,214,160,0.3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#06D6A0" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span><strong>Zero Setup Required:</strong> Everything runs on our servers — you never touch a config, account, or setting.</span></li>
+            <li class="fitem"><div class="fcheck" style="background:rgba(6,214,160,0.15);border-color:rgba(6,214,160,0.3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#06D6A0" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span><strong>All Costs Covered:</strong> $49/month is all you pay — hosting, AI, and everything in between. No hidden fees, no surprise bills.</span></li>
+            <li class="fitem"><div class="fcheck" style="background:rgba(6,214,160,0.15);border-color:rgba(6,214,160,0.3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#06D6A0" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span><strong>Branding Customization:</strong> Custom-styled to match your logo, colors, and fonts — looks completely native to your site.</span></li>
+            <li class="fitem"><div class="fcheck" style="background:rgba(6,214,160,0.15);border-color:rgba(6,214,160,0.3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#06D6A0" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span><strong>Google Maps Integration:</strong> Satellite roof views so homeowners can see their own roof as they calculate.</span></li>
+            <li class="fitem"><div class="fcheck" style="background:rgba(6,214,160,0.15);border-color:rgba(6,214,160,0.3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#06D6A0" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span><strong>Instant Email Alerts:</strong> The moment someone completes their estimate, you get an email with their full details — while they're still on your site.</span></li>
+            <li class="fitem"><div class="fcheck" style="background:rgba(6,214,160,0.15);border-color:rgba(6,214,160,0.3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#06D6A0" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span><strong>Automatic Lead Capture:</strong> Every lead is logged automatically — name, address, bill amount, and estimate results — organised and ready for your follow-up.</span></li>
+            <li class="fitem"><div class="fcheck" style="background:rgba(6,214,160,0.15);border-color:rgba(6,214,160,0.3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#06D6A0" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span><strong>Cancel Anytime:</strong> No contracts, no lock-in. Stop whenever you want.</span></li>
+          </ul>
+        </div>
+        <div class="pfooter">
+          <p class="ptimeline">Timeline: <strong>1 Week</strong> <span>(Total time required from you: just a 30-minute kickoff call)</span></p>
+          <div style="margin-top:22px;display:flex;flex-direction:column;gap:14px">
+            <p style="font-size:14px;color:var(--text-2);line-height:1.65">Best for installers who want zero technical headaches. Everything runs on our servers — you just get the leads straight to your inbox. Flat $49/month, everything included, cancel whenever you want.</p>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:4px">
+              <a href="https://calendly.com/palashrajput/30min/" target="_blank" class="btn-p" style="background:linear-gradient(135deg,#06D6A0,#0BA87E);box-shadow:0 8px 28px rgba(6,214,160,.3)">Get Started →</a>
+              <a href="estimate.html" target="_blank" class="btn-s" style="font-size:13px">Try the demo first</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<div class="wrap">
+  <p class="sec-lbl reveal">FAQs</p>
+  <h2 class="sec-h2 reveal">Questions You Might Have...</h2>
+  <div class="faq-list reveal">
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">How long does installation take?<div class="faq-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+      <div class="faq-a"><div class="faq-ai">3-5 days from start to finish.<br><br>Here's what I need from you: 30-minute kickoff call, that's it. I handle everything else: customization, installation, testing, CRM integration. Most installers think this will take weeks of back-and-forth. It won't.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">Do I need a new website?<div class="faq-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+      <div class="faq-a"><div class="faq-ai">Nope. I can install it on WordPress, Webflow, Wix, HighLevel, Squarespace—whatever you're using.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">Who owns the leads?<div class="faq-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+      <div class="faq-a"><div class="faq-ai">You do. Every lead goes straight to your email or CRM. I never see them.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">What happens after the tool goes live?<div class="faq-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+      <div class="faq-a"><div class="faq-ai">It stays on your site forever and keeps capturing leads automatically. You don't have to touch it unless you want to.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">Can I test it before I buy?<div class="faq-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+      <div class="faq-a"><div class="faq-ai">Yes—test the live demo here: <a href="solar-.html" target="_blank">Click Here</a><br><br>That's the exact tool you'll get, customised with your branding and connected to your CRM.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">How accurate are the estimates?<div class="faq-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+      <div class="faq-a"><div class="faq-ai">Accurate enough to start the conversation—and instant, not gated behind a "quote request." Final numbers come after the site visit, just like every solar sale.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">Will this slow down my website?<div class="faq-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+      <div class="faq-a"><div class="faq-ai">No. The tool is lightweight and fast-loading. Your site speed won't change—but your conversion rate will.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">Which CRMs do you integrate with?<div class="faq-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+      <div class="faq-a"><div class="faq-ai">Any CRM with webhook support: HubSpot, GoHighLevel, Salesforce, Zoho, Aurora, Enerflo, Sunbase, and more. I use Make.com to route leads wherever you need—CRM, email, Slack, SMS, or all of the above.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="faq(this)">I already have a calculator from my panel supplier. Why do I need this?<div class="faq-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+      <div class="faq-a"><div class="faq-ai">Manufacturer calculators are built to sell panels, not capture leads. They're usually ugly, generic, and don't connect to your CRM. This tool is custom-branded to your site and built specifically to convert visitors into qualified appointments.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- BOTTOM CTA -->
+<div class="bcta-wrap reveal">
+  <div class="bcard">
+    <span class="bcard-icon">
+      <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/69793ef08cc84fc01635b58c_strategy.png" alt="" style="height:56px;display:block;margin:0 auto">
+    </span>
+    <h2>Turn Website Visitors Into<br>Qualified Appointments</h2>
+    <p class="sub">You're already getting traffic. Right now most of it is leaving without ever raising a hand.</p>
+    <p class="sub2">On this free strategy call, we'll look at your current site together, talk through how the tool works, and figure out whether it's the right fit for your business — no pressure, no pitch.</p>
+    <div class="bcard-btns">
+      <a href="https://calendly.com/palashrajput/30min/" target="_blank" class="btn-p" style="font-size:17px;padding:18px 36px">
+        📞 Book a Free Strategy Call
+      </a>
+      <a href="estimate.html" target="_blank" class="btn-outline">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        See the demo first — no sign-up required
+      </a>
+    </div>
+    <div class="bcard-trust">
+      <div class="trust-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Free — no commitment
+      </div>
+      <div class="trust-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        30 minutes
+      </div>
+      <div class="trust-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        See if it's a fit first
+      </div>
+      <div class="trust-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        No pressure, no pitch
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <img src="https://cdn.prod.website-files.com/696becd0f7e2abec4f429ee4/696cc2302a368dd983d942f1_Logo.svg" alt="Palash Solar">
+  </div>
+  <p class="footer-copy">© Palash Solar 2026</p>
+  <div class="footer-links">
+    <a href="https://www.facebook.com/people/PalashSolarcom/61558745502233/" target="_blank">Facebook</a>
+    <a href="https://calendly.com/palashrajput/30min/" target="_blank">Book a Call</a>
+  </div>
+</footer>
+
+</div><!-- /page -->
+
+<script>
+/* ── FAQ accordion ──────────────────────── */
+function faq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+/* ── Scroll reveal ──────────────────────── */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach((el, i) => {
+  el.style.transitionDelay = (i % 5) * 0.07 + 's';
+  revealObs.observe(el);
+});
+
+/* ── Seamless logo scroll — JS duplicates until wide enough ── */
+(function() {
+  const track = document.getElementById('logoTrack');
+  if (!track) return;
+  const original = Array.from(track.children);
+  // Clone until we have at least 3× the original count for gapless loop
+  const copies = 3;
+  for (let c = 0; c < copies; c++) {
+    original.forEach(img => track.appendChild(img.cloneNode(true)));
+  }
+  // Measure one set width after images load, then set animation
+  function startScroll() {
+    const oneSetW = original.reduce((sum, img) => {
+      const s = window.getComputedStyle(img);
+      return sum + img.offsetWidth + parseInt(s.marginLeft) + parseInt(s.marginRight);
+    }, 0);
+    if (oneSetW === 0) { requestAnimationFrame(startScroll); return; }
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes logoRun { from { transform: translateX(0) } to { transform: translateX(-${oneSetW}px) } }
+      #logoTrack { animation: logoRun ${Math.round(oneSetW / 40)}s linear infinite; }
+      #logoTrack:hover { animation-play-state: paused; }
+    `;
+    document.head.appendChild(style);
+  }
+  // Wait for layout
+  if (document.readyState === 'complete') startScroll();
+  else window.addEventListener('load', startScroll);
+})();
+
+/* ── Animated step timeline ─────────────── */
+(function() {
+  const container = document.getElementById('stepsContainer');
+  const line = document.getElementById('stepLine');
+  const steps = Array.from(document.querySelectorAll('.step'));
+  if (!container || !line || !steps.length) return;
+
+  // The line runs from the centre of the first number to the centre of the last
+  // We measure these offsets relative to the container top
+  function getLineRange() {
+    const containerTop = container.getBoundingClientRect().top + window.scrollY;
+    const firstNum = steps[0].querySelector('.snum');
+    const lastNum  = steps[steps.length - 1].querySelector('.snum');
+    const firstRect = firstNum.getBoundingClientRect();
+    const lastRect  = lastNum.getBoundingClientRect();
+    const start = firstRect.top + firstRect.height / 2 + window.scrollY - containerTop;
+    const end   = lastRect.top  + lastRect.height  / 2 + window.scrollY - containerTop;
+    return { start, end, total: end - start };
+  }
+
+  // Position the rail to span exactly start→end
+  function positionRail() {
+    const { start, total } = getLineRange();
+    // Move the static ::before pseudo via a sibling element approach:
+    // We control both rail and fill via .step-line and its sibling bg
+    container.style.setProperty('--line-top',  start + 'px');
+    container.style.setProperty('--line-total', total + 'px');
+    // Update static rail directly on steps::before via injected style
+    if (!document._railStyle) {
+      const s = document.createElement('style');
+      document.head.appendChild(s);
+      document._railStyle = s;
+    }
+    document._railStyle.textContent = `
+      #stepsContainer::before {
+        top: ${start}px !important;
+        height: ${total}px !important;
+        bottom: auto !important;
+      }
+      #stepLine {
+        top: ${start}px !important;
+      }
+    `;
+  }
+
+  function updateSteps() {
+    positionRail();
+    const { start, total } = getLineRange();
+    const containerTop = container.getBoundingClientRect().top + window.scrollY;
+    const viewportMid = window.scrollY + window.innerHeight * 0.65;
+
+    // Progress: how far down the line the viewport has travelled (0→1)
+    const scrolled = viewportMid - (containerTop + start);
+    const progress = Math.max(0, Math.min(1, scrolled / total));
+    line.style.height = (progress * total) + 'px';
+
+    // Activate each step when its number centre crosses viewport 65%
+    steps.forEach(step => {
+      const num = step.querySelector('.snum');
+      const numCentre = num.getBoundingClientRect().top + num.offsetHeight / 2;
+      if (numCentre < window.innerHeight * 0.72) {
+        step.classList.add('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateSteps, { passive: true });
+  window.addEventListener('resize', () => { positionRail(); updateSteps(); }, { passive: true });
+  // Run after fonts/images settle
+  setTimeout(updateSteps, 200);
+  window.addEventListener('load', updateSteps);
+})();
+</script>
+
+<script>
+function switchPlan(plan, btn) {
+  // Update tabs
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  // Update plans
+  document.querySelectorAll('.pplan').forEach(p => p.classList.remove('active'));
+  document.getElementById('plan-' + plan).classList.add('active');
+}
+</script>
+
+</body>
+</html>
