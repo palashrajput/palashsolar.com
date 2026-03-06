@@ -1277,10 +1277,10 @@ body {
 @keyframes bdpulse { 0%,100%{opacity:1;transform:scale(1);box-shadow:0 0 5px #F5A623} 50%{opacity:.5;transform:scale(1.4);box-shadow:0 0 12px #F5A623} }
 .banner-text {
   font-family: 'DM Sans', sans-serif; font-size: 13px; color: rgba(255,255,255,0.75);
-  line-height: 1.4; margin: 0; text-decoration: none; display: flex;
-  align-items: center; gap: 0; flex-wrap: nowrap; min-width: 0;
+  line-height: 1.4; margin: 0; text-decoration: none;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
 }
-.banner-text strong { color: #fff; font-weight: 600; }
+.banner-text strong { color: #fff; font-weight: 600; white-space: nowrap; }
 .banner-btn {
   flex-shrink: 0;
   display: inline-flex;
@@ -1302,44 +1302,42 @@ body {
 /* Fixed-width container for cycling text — prevents layout shift */
 .banner-cycle-wrap {
   display: inline-block;
-  width: 260px;
-  flex-shrink: 0;
   overflow: hidden;
   white-space: nowrap;
+  vertical-align: middle;
 }
 .banner-cycle { color: #FFD166; font-weight: 600; transition: opacity 0.4s ease; display: inline-block; }
 .banner-cycle.fade-out { opacity: 0; }
 .banner-cycle.fade-in  { opacity: 0; }
 .banner-cycle.visible  { opacity: 1; }
-@media(max-width:600px){
-  .banner-text { font-size: 12px; }
-  .banner-cycle-wrap { width: 200px; }
-  .calc-wrapper { padding-top: 80px; }
-}
-/* X inside container on the right */
-.banner-dismiss {
-  flex-shrink: 0;
-  background: none; border: none; color: rgba(255,255,255,0.3);
-  cursor: pointer; font-size: 18px; line-height: 1; padding: 4px 2px;
-  transition: color .2s;
-}
-.banner-dismiss:hover { color: rgba(255,255,255,0.7); }
-/* Push content below banner + add breathing room above AI badge */
 .calc-wrapper { padding-top: 86px; }
+/* Hide "Hey Solar Installer" on anything smaller than full desktop */
+@media(max-width:860px){
+  .banner-installer { display: none; }
+}
+/* Smaller tablets — shrink text */
 @media(max-width:600px){
   .banner-text { font-size: 12px; }
   .calc-wrapper { padding-top: 80px; }
+}
+/* Phones — hide cycling text and button, make whole banner feel like a tap target */
+@media(max-width:480px){
+  .banner-cycle-wrap { display: none; }
+  .banner-btn { display: none; }
+  .banner-row { padding: 10px 16px; gap: 0; }
+  #top-banner { cursor: pointer; }
 }
 </style>
 </head>
 <body>
 <!-- TOP ANNOUNCEMENT BANNER -->
-<div id="top-banner">
+<div id="top-banner" onclick="if(window.innerWidth<=480)window.open('https://palashsolar.com','_blank')">
+  <!-- Full banner is a link on mobile (pointer on #top-banner) -->
   <div class="banner-row">
-    <a href="https://palashsolar.com" target="_blank" style="flex:1;display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0;overflow:hidden">
+    <a href="https://palashsolar.com" target="_blank" style="flex:1;display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0;overflow:hidden;max-width:100%">
       <span class="banner-dot"></span>
       <p class="banner-text">
-        <strong>Hey Solar Installer &#128075;</strong>&nbsp;&mdash;&nbsp;Want this exact tool on your site?&nbsp;<span class="banner-cycle-wrap"><span class="banner-cycle visible" id="bannerCycle">One-time setup. No monthly fees.</span></span>
+        <span class="banner-installer"><strong>Hey Solar Installer &#128075;</strong>&nbsp;&mdash;&nbsp;</span>Want this exact tool on your site?&nbsp;<span class="banner-cycle-wrap"><span class="banner-cycle visible" id="bannerCycle">One-time setup. No monthly fees.</span></span>
       </p>
     </a>
     <a href="https://palashsolar.com" target="_blank" class="banner-btn">See How It Works &rarr;</a>
