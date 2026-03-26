@@ -743,6 +743,25 @@ footer{border-top:1px solid var(--border);max-width:var(--max);
 <div class="wrap">
   <p class="sec-lbl reveal">FAQs</p>
   <h2 class="sec-h2 reveal">Questions You Might Have...</h2>
+
+
+<!-- Cal inline embed code begins -->
+<div style="width:100%;height:100%;overflow:scroll" id="my-cal-inline-solariq"></div>
+<script type="text/javascript">
+  (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+Cal("init", "solariq", {origin:"https://app.cal.com"});
+
+  Cal.ns.solariq("inline", {
+    elementOrSelector:"#my-cal-inline-solariq",
+    config: {"layout":"month_view","useSlotsViewOnSmallScreen":"true"},
+    calLink: "palashrajput/solariq",
+  });
+
+  Cal.ns.solariq("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
+  </script>
+  <!-- Cal inline embed code ends -->
+
+  
   <div class="faq-list reveal">
     <div class="faq-item">
       <button class="faq-q" onclick="faq(this)">How long does installation take?<div class="faq-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
